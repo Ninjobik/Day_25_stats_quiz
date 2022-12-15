@@ -11,12 +11,26 @@ screen.addshape(image)
 
 turtle.shape(image)
 correct_guesses = []
+missing_states = []
+data = pandas.read_csv("50_states.csv")
+
+
+def generate_log_csv():
+    all_states = data.state.to_list()
+    for each in all_states:
+        if each not in correct_guesses:
+            missing_states.append(each)
+    new_data = pandas.DataFrame(missing_states)
+    new_data.to_csv("missing_states.csv")
+
 
 while len(correct_guesses) < 50:
     user_guess = screen.textinput(f"Guess the state {len(correct_guesses)}/50", "Write name of a state")
-    data = pandas.read_csv("50_states.csv")
     if user_guess != '' and user_guess.title() not in correct_guesses:
         df = data[data.state == user_guess.title()]
+        if user_guess.title() == "Exit":
+            generate_log_csv()
+            break
         if df.empty:
             print(user_guess.title())
         else:
@@ -25,4 +39,4 @@ while len(correct_guesses) < 50:
             print(correct_guesses)
 
 
-screen.exitonclick()
+# screen.exitonclick()
